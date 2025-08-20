@@ -1,7 +1,6 @@
 const { structureResponse, hashPassword } = require('../utils/common.utils');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { sendOTPEmail } = require('../utils/sendgrid.utils');
 const otpGenerator = require('otp-generator');
 const { Config } = require('../configs/config');
 
@@ -21,7 +20,6 @@ const {
     UpdateFailedException,
     UnexpectedException
 } = require('../utils/exceptions/database.exception');
-
 
 class AuthRepository {
 
@@ -110,9 +108,10 @@ class AuthRepository {
 
         const OTP = await this.#generateOTP(user.user_id, body.email);
 
-        sendOTPEmail(user, OTP);
+        // SendGrid email removed — You may log OTP instead for debugging
+        console.log(`Generated OTP for ${body.email}: ${OTP}`);
 
-        return structureResponse({}, 1, 'OTP generated and sent via email');
+        return structureResponse({}, 1, 'OTP generated (logging only, no email sent)');
     }
 
     #generateOTP = async (user_id, email) => {
